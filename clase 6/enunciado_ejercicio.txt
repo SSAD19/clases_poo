@@ -4,6 +4,7 @@ Se debe crear una clase abstracta llamada CuentaBancaria, una clase CajaDeAhorro
 CuentaCorriente, ambas que hereden de CuentaBancaria. Una clase Cliente que entre sus
 atributos tenga una lista de elementos de tipo CuentaBancaria, y una clase Banco que entre sus
 atributos tenga una lista de elementos de tipo Cliente.
+
 La clase CuentaBancaria, debe contener:
 • Atributos de instancia:
 o nro_cuenta de tipo string.
@@ -32,6 +33,8 @@ retorna un valor booleano. En caso que la transferencia se haya realizado correc
 y luego de haber actualizado el saldo, debe agregar un nuevo elemento a la lista
 movimientos, donde elemento será una tupla que tendrá los siguientes elementos: fecha
 de tipo date, “transferencia”, monto transferido y saldo.
+
+
 La clase CajaDeAhorro debe contener:
 • Atributos de instancia:
 o monto_limite_extracciones de tipo float.
@@ -59,6 +62,9 @@ monto_limite_transferencias y si la cant_transferencias_disponibles es mayor a c
 cuyo caso se deberá actualizar el saldo y cant_transferencias_disponibles de la cuenta
 origen y el saldo de la cuenta destino; e invocar al método heredado para registrar el
 movimiento.
+
+
+
 La clase CuentaCorriente debe contener:
 • Atributos de instancia:
 o monto_maximo_descubierto de tipo float.
@@ -77,6 +83,9 @@ transferencia se considerará como correcta si monto_a_transferir es mayor a cer
 monto_a_transferir no es superior al saldo más el monto_maximo_descubierto, en cuyo
 caso se deberá actualizar el saldo de la cuenta origen y el saldo de la cuenta destino; e
 invocar al método heredado para registrar el movimiento.
+
+
+
 La clase Cliente debe contener:
 • Atributos de instancia:
 o razon_social de tipo string.
@@ -89,12 +98,17 @@ o cuentas_bancarias de tipo list.
 o __init__(self, *args) para inicializar los atributos de instancia razon_social, cuit,
 tipo_persona y domicilio con los valores recibidos como parámetros, y el atributo
 cuentas_bancarias como una nueva lista.
+
 • Métodos de instancia:
 o crear_nueva_cuenta_bancaria (), que retorna un booleano indicando si la operación se
 realizó correctamente. Para crear una nueva instancia de CuentaBancaria se debe indicar
 el tipo de cuenta (CajaDeAhorro o CuentaCorriente) e ingresar nro_cuenta, alias, cbu, saldo
 y demás valores necesarios según el tipo de cuenta. El nuevo objeto CuentaBancaria debe
 agregarse a la lista cuentas_bancarias.
+
+
+
+
 La clase Banco debe contener:
 • Atributos de instancia:
 o nombre de tipo string.
@@ -107,6 +121,13 @@ valores recibidos como parámetros, y el atributo clientes como una nueva lista.
 o crear_nuevo_cliente (), que retorna un booleano indicando si la operación se realizó
 correctamente. Para crear una nueva instancia de Cliente se debe ingresar razon_social,
 cuit, tipo_persona y domicilio. El nuevo objeto Cliente debe agregarse a la lista clientes.
+
+
+
+
+
+
+
 Para validar el modelo de gestión bancaria implementado, incluya una función main() con las
 instrucciones necesarias para crear un objeto Banco, tres instancias de Clientes (como mínimo)
 cada uno de ellos con dos objetos CuentaBancaria (como mínimo), uno de tipo CajaDeAhorro y
