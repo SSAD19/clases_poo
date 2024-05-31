@@ -73,7 +73,7 @@ cuyo caso se deberá actualizar el saldo y cant_transferencias_disponibles de la
 origen y el saldo de la cuenta destino; e invocar al método heredado para registrar el
 movimiento.
 
-
+---------------------------------------------------
 
 La clase CuentaCorriente debe contener:
 • Atributos de instancia:
@@ -94,7 +94,7 @@ monto_a_transferir no es superior al saldo más el monto_maximo_descubierto, en 
 caso se deberá actualizar el saldo de la cuenta origen y el saldo de la cuenta destino; e
 invocar al método heredado para registrar el movimiento.
 
-
+-----------------------------------------------------------------------
 
 La clase Cliente debe contener:
 • Atributos de instancia:
@@ -116,7 +116,7 @@ el tipo de cuenta (CajaDeAhorro o CuentaCorriente) e ingresar nro_cuenta, alias,
 y demás valores necesarios según el tipo de cuenta. El nuevo objeto CuentaBancaria debe
 agregarse a la lista cuentas_bancarias.
 
-
+--------------------------------------------------------------------------------
 
 
 La clase Banco debe contener:
@@ -134,7 +134,7 @@ cuit, tipo_persona y domicilio. El nuevo objeto Cliente debe agregarse a la list
 
 
 
-
+---------------------------------------
 
 
 
@@ -142,9 +142,11 @@ Para validar el modelo de gestión bancaria implementado, incluya una función m
 instrucciones necesarias para crear un objeto Banco, tres instancias de Clientes (como mínimo)
 cada uno de ellos con dos objetos CuentaBancaria (como mínimo), uno de tipo CajaDeAhorro y
 otro de tipo CuentaCorriente.
+
 Luego simule varias operaciones de depósito, extracción y transferencias entre las cuentas.
 Finalmente, muestre por pantalla los datos de los clientes del banco, con los saldos de sus cuentas
 y el registro de los movimientos de las mismas.
+
 Nota:
 Todos los atributos de instancia declarados en las clases deberán ser privados y accesibles
 mediante propiedades públicas de tipo getters y setters (usando el decorador @property).
