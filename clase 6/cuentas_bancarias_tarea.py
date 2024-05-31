@@ -3,6 +3,7 @@
 
 from abc import ABC, abstractmethod
 import datetime
+from operator import index
 
 
 class CuentaBancaria(ABC):
@@ -11,7 +12,7 @@ class CuentaBancaria(ABC):
         self.cbu:str = args[1]
         self.alias:str = args[2]
         self.saldo:float = args[3]
-        self.movimientos:tuple = []
+        self.movimientos= []
         
     @property
     def nro_cuenta(self) -> str:
@@ -40,20 +41,12 @@ class CuentaBancaria(ABC):
     @saldo.setter
     def saldo(self, value:float):
         self.__saldo = value
-   
-    @property
-    def movimientos(self) -> list: 
-        return self.__movimientos
-    @movimientos.setter
-    def movimientos(self, value:tuple):
-        self.__movimientos.append(value)
-   
-   
+      
     def consultar_saldo(self) -> float:
         return self.__saldo
     
     def registrar_movimiento(self, operacion:str, importe:float):
-        movimiento:tuple = (datetime.now(), operacion, importe, self.consultar_saldo())
+        movimiento:tuple = (datetime.datetime.now(), operacion, importe, self.consultar_saldo())
         self.movimientos.append(movimiento)
     
     def depositar(self, monto_a_depositar:float)  -> bool:
@@ -69,13 +62,11 @@ class CuentaBancaria(ABC):
     
     @abstractmethod
     def extraer(self, monto_a_extraer:float) -> bool:
-        self.registrar_movimiento('extracción', monto_a_extraer)
         pass
        
     
     @abstractmethod
-    def transferir(self, monto_a_transferir:float, cuenta_destino:CuentaBancaria) ->bool: # type: ignore
-        self.registrar_movimiento('transferencia',  monto_a_transferir)
+    def transferir(self, monto_a_transferir:float, cuenta_destino) ->bool:
         pass
  
 
@@ -115,11 +106,16 @@ class CajaDeAhorro(CuentaBancaria):
     def cant_transferencias_disponibles(self, value:int):
         self.__cant_transferencias_disponibles = value
     
+    
+    def depositar(self, monto_a_depositar: float) -> bool:
+        return super().depositar(monto_a_depositar)
+    
+    
     def extraer(self, monto_a_extraer: float) -> bool:
         if monto_a_extraer > 0 and self.monto_limite_extracciones >= monto_a_extraer <= self.saldo and monto_a_extraer and self.cant_extracciones_disponibles > 0:
            self.saldo -= monto_a_extraer
            self.cant_extracciones_disponibles -= 1
-           super().depositar(monto_a_extraer)
+           self.registrar_movimiento('extracción', monto_a_extraer)
            return True
         else:
             return False
@@ -130,8 +126,8 @@ class CajaDeAhorro(CuentaBancaria):
         if monto_a_transferir > 0 and self.monto_limite_transferencias >= monto_a_transferir <= self.saldo and self.cant_transferencias_disponibles > 0:
             self.saldo -= monto_a_transferir;
             self.cant_transferencias_disponibles -= 1
-            cuenta_destino.saldo += monto_a_transferir        
-            super().transferir(monto_a_transferir, cuenta_destino)
+            cuenta_destino.saldo += monto_a_transferir 
+            self.registrar_movimiento('transferencia',  monto_a_transferir)  
             return True
         else: 
             return False
@@ -149,10 +145,14 @@ class CuentaCorriente(CuentaBancaria):
     def monto_maximo_descubierto(self, value:float):
         self.__monto_maximo_descubierto = value
     
+    def depositar(self, monto_a_depositar: float) -> bool:
+        return super().depositar(monto_a_depositar)
+    
+    
     def extraer(self, monto_a_extraer: float) -> bool:
         if monto_a_extraer > 0 and monto_a_extraer < self.monto_maximo_descubierto:
             self.saldo -= monto_a_extraer
-            super().extraer(monto_a_extraer)
+            self.registrar_movimiento('extracción', monto_a_extraer)
             return True
         else:
             return False
@@ -161,12 +161,11 @@ class CuentaCorriente(CuentaBancaria):
     def transferir(self, monto_a_transferir: float, cuenta_destino: CuentaBancaria) -> bool:
         if monto_a_transferir > 0 and monto_a_transferir < self.monto_maximo_descubierto:
             self.saldo -= monto_a_transferir
-            CuentaBancaria.saldo += monto_a_transferir
-            super().transferir(monto_a_transferir, cuenta_destino)
+            cuenta_destino.saldo += monto_a_transferir
+            self.registrar_movimiento('transferencia',  monto_a_transferir)
             return True
         else:
             return False
-
 
 
 class Cliente(): 
@@ -175,7 +174,7 @@ class Cliente():
         self.cuit:str = args[1]
         self.tipo_persona:str = args[2]
         self.domicilio:str = args[3]
-        self.cuentas_bancarias:CuentaBancaria = []
+        self.cuentas_bancarias:list[CuentaBancaria] = []
         
     
     @property
@@ -206,23 +205,18 @@ class Cliente():
     def domicilio(self, value:str):
         self.__domicilio = value
     
-    @property
-    def cuentas_bancarias(self):
-        return self.__cuentas_bancarias
-    @cuentas_bancarias.setter
-    def cuentas_bancarias(self, value:CuentaBancaria):
-        self.__cuentas_bancarias.append(value)
-    
+  
     def crear_nueva_cuenta_bancaria(self, tipo_cuenta:str, nro_cuenta:str, alias:str, cbu:str, saldo:int = 0) -> bool: 
         try:
             if tipo_cuenta== 'Ahorro':
-                nuevaCuenta = CajaDeAhorro(nro_cuenta, alias, cbu, saldo)
+                nuevaCuenta = CajaDeAhorro(nro_cuenta, alias, cbu, saldo, 10000, 10000, 3, 3)
                 self.cuentas_bancarias.append(nuevaCuenta)
             else: 
-                nuevaCuenta = CuentaCorriente (nro_cuenta, alias, cbu, saldo)
+                nuevaCuenta = CuentaCorriente (nro_cuenta, alias, cbu, saldo, 10000)
                 self.cuentas_bancarias.append(nuevaCuenta)
             return True
-        except:
+        except Exception as e:
+            print(f'no se pudo crear la cuenta: {e}')
             return False
 
 
@@ -230,7 +224,7 @@ class Banco():
     def __init__(self, *args):
         self.nombre = args[0]
         self.domicilio = args[1]
-        self.clientes:Cliente = []
+        self.clientes:list[Cliente] = []
     
     @property
     def nombre(self):
@@ -246,21 +240,63 @@ class Banco():
     def domicilio(self, value:str):
         self.__domicilio = value
     
-    @property
-    def clientes(self):
-        return self.__clientes
-    @clientes.setter
-    def clientes(self, value:Cliente):
-        self.__clientes.append(value)
+  
+    def crear_nuevo_cliente(self, razon_social:str, cuit:str, tipo_persona:str, domicilio:str) -> bool:
+        try:
+            nvoCliente = Cliente(razon_social, cuit, tipo_persona, domicilio)
+            self.clientes.append(nvoCliente)
+            return True
+        except:
+            return False
     
         
+def main():
+    banco = Banco("Banco de la Nación Argentina", "Av. 9 de Julio")
+    print(banco)
+    
+    banco.crear_nuevo_cliente("Juan Pérez", "20-8965321-9", "fisica", "sin direccion");
+    banco.crear_nuevo_cliente("Andres Pérez", "20-8965326-9", "fisica", "sin direccion");
+    banco.crear_nuevo_cliente("Pepe Pérez", "20-8965325-9", "jurídica", "sin direccion");
+    
+    clientes = banco.clientes
+       
+    for cliente in clientes:
+       crear1 = cliente.crear_nueva_cuenta_bancaria('Ahorro', f'ejemplo-12345{index}', f'persona{index}', f'123-456-{index}')
+       crear2 = cliente.crear_nueva_cuenta_bancaria('Corriente', f'ejemplo-12345{index}', f'persona{index}', f'123-456-{index}')
+       print(crear1,' ' ,crear2 )
+    
+    clientes[0].cuentas_bancarias[0].depositar(37000)
+    clientes[1].cuentas_bancarias[0].depositar(45000)
+    clientes[2].cuentas_bancarias[1].depositar(1037000)
+    
+    for cliente in clientes:
+        print(f'El cliente {cliente.razon_social}, tiene un saldo de: {cliente.cuentas_bancarias[0].consultar_saldo()} en su {cliente.cuentas_bancarias[0].__class__.__name__} y un saldo de {cliente.cuentas_bancarias[1].consultar_saldo()} en su {cliente.cuentas_bancarias[1].__class__.__name__}')
+
+    clientes[2].cuentas_bancarias[1].transferir(2000.0, clientes[0].cuentas_bancarias[0]) 
+    print(clientes[0].cuentas_bancarias[0].consultar_saldo())
+  
 '''
+    
 
-• Métodos de instancia:
-o crear_nuevo_cliente (), que retorna un booleano indicando si la operación se realizó
-correctamente. Para crear una nueva instancia de Cliente se debe ingresar razon_social,
-cuit, tipo_persona y domicilio. El nuevo objeto Cliente debe agregarse a la lista clientes.
+Luego simule varias operaciones de depósito, extracción y transferencias entre las cuentas.
+Finalmente, muestre por pantalla los datos de los clientes del banco, con los saldos de sus cuentas
+y el registro de los movimientos de las mismas.
+
+Nota:
+Todos los atributos de instancia declarados en las clases deberán ser privados y accesibles
+mediante propiedades públicas de tipo getters y setters (usando el decorador @property).
+Para trabajar con fechas debe importar el módulo datetime.
+
+   '''
+   
+   
+   
+   
+   
+   
+if __name__ == "__main__":
+    main()
 
 
-'''
+
 
