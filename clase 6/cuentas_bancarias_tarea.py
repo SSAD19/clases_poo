@@ -274,25 +274,16 @@ def main():
 
     clientes[2].cuentas_bancarias[1].transferir(2000.0, clientes[0].cuentas_bancarias[0]) 
     print(clientes[0].cuentas_bancarias[0].consultar_saldo())
-  
-'''
     
-
-Luego simule varias operaciones de depósito, extracción y transferencias entre las cuentas.
-Finalmente, muestre por pantalla los datos de los clientes del banco, con los saldos de sus cuentas
-y el registro de los movimientos de las mismas.
-
-Nota:
-Todos los atributos de instancia declarados en las clases deberán ser privados y accesibles
-mediante propiedades públicas de tipo getters y setters (usando el decorador @property).
-Para trabajar con fechas debe importar el módulo datetime.
-
-   '''
-   
-   
-   
-   
-   
+    clientes[1].cuentas_bancarias[0].extraer(4000.0)
+    print(clientes[1].cuentas_bancarias[0].consultar_saldo())
+    
+    clientes[0].cuentas_bancarias[0].depositar(35000.0)
+    print(clientes[0].cuentas_bancarias[0].consultar_saldo())
+    
+    clientes[1].cuentas_bancarias[0].extraer(46000.0)
+    print(clientes[1].cuentas_bancarias[0].consultar_saldo())
+  
    
 if __name__ == "__main__":
     main()
