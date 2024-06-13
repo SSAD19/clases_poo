@@ -1,0 +1,30 @@
+Ejercicio de Manejo de Bases de Datos con Python
+Desarrollar una aplicación Python que se conecte a una base de datos SQLite, 
+llamada
+empleados. Que contiene una tabla también llamada empleados.
+La estructura de la tabla empleados es la siguiente:
+• id int pk ai not null,
+• nro_legajo int NOT NULL UNIQUE,
+• dni int NOT NULL UNIQUE,
+• nombre text NOT NULL,
+• apellido text NOT NULL,
+• area text NOT NULL
+
+La aplicación debe permitir crear la tabla. La creación de la tabla debe estar en una
+función o método llamado crearTabla.
+El programa debe solicitar al usuario que ingrese por consola una de las siguientes
+opciones:
+• Opcion 1 Insertar un registro de empleado.
+• Opcion 2 Selecionar un registro de empleado a partir de su numero DNI.
+• Opcion 3 Selecionar todos los empleados o los registros de la tabla.
+• Opcion 4 Modificar el area de un empleado en función de su numero de legajo.
+• Opcion 5 Eliminar un empleado a partir del numero de legajo.
+• Opcion 6 Finalizar.
+Cada opción se tiene que ingresar por teclado. Cada una de las sentencias que van a
+permitir ejecutar cada opción debe estar en una función por separado (salvo la opción
+nro 6). Es decir, la opción 1 “insertar un registro de empleado” tiene su propia función.
+La conexión a la Base de Datos también debe estar en una función por separado, al
+igual que la creación de la tabla es otra función.
+Luego de realizar acciones de modificación de datos INSERT DELETE UPDATE se debe
+cerrar la conexión.
+Notación: ai auto incremental , pk primary key
